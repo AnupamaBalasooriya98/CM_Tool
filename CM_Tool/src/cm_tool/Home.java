@@ -500,6 +500,7 @@ public class Home extends javax.swing.JFrame {
         String filename = f.getAbsolutePath();
         path.setText(filename);
 
+        // Upload single file
         try {
             FileReader reader = new FileReader(filename);
             BufferedReader br = new BufferedReader(reader);
@@ -507,6 +508,24 @@ public class Home extends javax.swing.JFrame {
             br.close();
             homeTextArea.requestFocus();
         } catch (Exception e) {
+            System.out.println(e);
+        }
+        
+        // Upload zip files
+        try {
+            FileInputStream fis = new FileInputStream(filename);
+            ZipInputStream zis = new ZipInputStream(fis);
+            ZipEntry ze;
+            
+            while ((ze = zis.getNextEntry()) != null) {
+                jComboBox2.addItem(ze.getName());
+                homeTextArea.setText("");
+                zis.closeEntry();
+            }
+            
+            zis.close();
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
