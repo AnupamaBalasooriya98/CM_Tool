@@ -25,6 +25,7 @@ public class Home extends javax.swing.JFrame {
 
     CtrlTbl ctrl;
     Analyse analyse;
+    Methods m;
 
     /**
      * Creates new form NewJFrametest1
@@ -68,6 +69,7 @@ public class Home extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
+        jDesktopPane1 = new javax.swing.JDesktopPane();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
 
@@ -557,12 +559,62 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public void totalComplexity() {
-        String[] colNames = {"#", "Line", "Size", "Variable", "Method", "Coupling", "Inheritance", "Ctrl Structures"};
+        // get file path to the uploaded file
+        String filepath = path.getText();
+
+        File file = new File(filepath);
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String[] colNames = {"#", "Line", "Cs", "Cv", "Cm", "Ci", "Ccp", "Ccs", "TCps"};
         
-        DefaultTableModel model = (DefaultTableModel) Analyse.jTable1.getModel();
-        model.setColumnIdentifiers(colNames);
-        
-        
+            DefaultTableModel model = (DefaultTableModel) Analyse.jTable1.getModel();
+            model.setColumnIdentifiers(colNames);
+
+            Object[] lines = br.lines().toArray();
+            
+            // read the file line by line and check for the control structures
+            for (int i = 1; i <= lines.length; i++) {
+                String line = lines[i].toString();
+
+                String col = String.valueOf(i);
+                
+                int size = Integer.parseInt(Methods.totalComplexityDueToSize(line)); // total complexity due to size
+                int variables = Integer.parseInt(Methods.totalComplexityDueToVariables(line)); // total complexity due to variables
+                int methods = Integer.parseInt(Methods.totalComplexityDueToMethods(line)); // total complexity due to methods
+                int inheritance = Integer.parseInt(Methods.totalComplexityDueToInheritance(line)); // total complexity due to inheritance
+                int coupling = Integer.parseInt(Methods.totalComplexityDueToCoupling(line)); // total complexity due to coupling
+                int ctrl = Integer.parseInt(Methods.totalComplexityDueToCtrlStructures(line)); // total complexity due to control structures 
+                
+                String total = String.valueOf(size + variables + methods + inheritance + coupling + ctrl);
+                
+                String[] data = {col, line,
+                    Methods.totalComplexityDueToSize(line),
+                    Methods.totalComplexityDueToVariables(line),
+                    Methods.totalComplexityDueToMethods(line),
+                    Methods.totalComplexityDueToInheritance(line),
+                    Methods.totalComplexityDueToCoupling(line),
+                    Methods.totalComplexityDueToCtrlStructures(line),
+                    total// total complexity
+                };
+                
+                model.addRow(data);
+                
+                // Set column sizes
+                Analyse.jTable1.setAutoResizeMode(Analyse.jTable1.AUTO_RESIZE_NEXT_COLUMN);
+                TableColumnModel colModel = Analyse.jTable1.getColumnModel();
+                colModel.getColumn(0).setPreferredWidth(35);
+                colModel.getColumn(1).setPreferredWidth(300);
+                colModel.getColumn(2).setPreferredWidth(35);
+                colModel.getColumn(3).setPreferredWidth(35);
+                colModel.getColumn(4).setPreferredWidth(35);
+                colModel.getColumn(5).setPreferredWidth(35);
+                colModel.getColumn(6).setPreferredWidth(35);
+                colModel.getColumn(7).setPreferredWidth(35);
+                colModel.getColumn(8).setPreferredWidth(35);
+            }
+        } catch (Exception e) {
+        }
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -604,7 +656,6 @@ public class Home extends javax.swing.JFrame {
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // TODO add your handling code here:
-        String selectedFile = jComboBox2.getSelectedItem().toString();
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
@@ -657,7 +708,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
-    public static final javax.swing.JDesktopPane jDesktopPane1 = new javax.swing.JDesktopPane();
+    public static javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

@@ -6,6 +6,7 @@
 package cm_tool;
 
 import ctrlStructures.*;
+import static ctrlStructures.CtrlTbl.jTable1;
 
 /**
  *
@@ -20,15 +21,6 @@ public class Analyse extends javax.swing.JInternalFrame {
      */
     public Analyse() {
         initComponents();
-    }
-    
-    public void getTotal() {
-        int total = 0;
-        for (int i = 0; i < jTable1.getRowCount(); i++) {
-            total = total + Integer.parseInt(jTable1.getValueAt(i, 5).toString());
-        }
-        
-        lbl_total.setText(Integer.toString(total));
     }
 
     /**
@@ -104,8 +96,12 @@ public class Analyse extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        getTotal();
+        int total = 0;
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            total = total + Integer.parseInt(jTable1.getValueAt(i, 8).toString());
+        }
+        
+        lbl_total.setText(Integer.toString(total));
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
