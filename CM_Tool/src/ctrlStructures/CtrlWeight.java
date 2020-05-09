@@ -7,10 +7,14 @@ package ctrlStructures;
 
 import cm_tool.Home;
 import static cm_tool.Home.jDesktopPane1;
+import static cm_tool.Home.path;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -190,64 +194,106 @@ public class CtrlWeight extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public void ctrlStructures() {
-        // get filepath for the test file
-        String file = h.path.getText();
-        
         // get values of weights
-        String col1 = jTextField1.getText(); // A conditional control structure such as an 'if' or 'else-if' condition
-        String col2 = jTextField2.getText(); // An iterative control structure such as a 'for', 'while', or 'do-while' loop
-        String col3 = jTextField3.getText(); // The 'switch' statement in a 'switch-case' control structure 
-        String col4 = jTextField4.getText(); // Each 'case' statement in a 'switch-case' control structure
+        String wtcsIfElse = jTextField1.getText(); // A conditional control structure such as an 'if' or 'else-if' condition
+        String wtcsForWhile = jTextField2.getText(); // An iterative control structure such as a 'for', 'while', or 'do-while' loop
+        String wtcsSwitch = jTextField3.getText(); // The 'switch' statement in a 'switch-case' control structure 
+        String wtcsCase = jTextField4.getText(); // Each 'case' statement in a 'switch-case' control structure
+
+        // number of conditions in single line
+        int count = 1;
+        
+        // Weights for each control structure
+        int forIfElse = Integer.parseInt(wtcsIfElse);
+        int forForWhile = Integer.parseInt(wtcsForWhile);
+        int forSwitch = Integer.parseInt(wtcsSwitch);
+        int forCase = Integer.parseInt(wtcsCase);
+        int noCtrl = 0;
+        
+        // complexity of previous program
+        int previous = 0;
+        
+        // calculate ccs
+        int valIfElse = forIfElse * count;
+        int valForWhile = forForWhile * count;
+        int valSwitch = forSwitch * count;
+        int valCase = forCase * count;
+        int valNothing = noCtrl * count;
+        
+        // convert that values into string
+        String nc = String.valueOf(count);
+        String nothing = String.valueOf(noCtrl);
+        String ccspps = String.valueOf(previous);
+        
+        // convert calculated values into string
+        String ccsIfElse = String.valueOf(valIfElse);
+        String ccsForWhile = String.valueOf(valForWhile);
+        String ccsSwitch = String.valueOf(valSwitch);
+        String ccsCase = String.valueOf(valCase);
+        String ccsNothing = String.valueOf(valNothing);
+        
+        // get file path to the uploaded file
+        String filepath = path.getText();
+
+        File file = new File(filepath);
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-            
-            // Give table header
-            String[] colNames =  {"Line no", "Wtcs", "NC", "Ccspps", "Ccs"};
-            
+
+            // give the table header
+            String[] colNames = {"#", "Line", "Wtcs", "NC", "Ccspps", "Ccs"};
+
             DefaultTableModel model = (DefaultTableModel) CtrlTbl.jTable1.getModel();
-            
+
             model.setColumnIdentifiers(colNames);
-            
+
             Object[] lines = br.lines().toArray();
-            
-            // Read line by line in the file and check for control structures
+
+            // read the file line by line and check for the control structures
             for (int i = 1; i <= lines.length; i++) {
                 String line = lines[i].toString();
 
                 String col = String.valueOf(i);
-                
+
                 // A conditional control structure such as an 'if' or 'else-if' condition
-                if (line.contains("if") || line.contains("else if")) {
-                    String[] data = {col, col1, "1", "0", col1};
+                if (line.contains(" if") || line.contains(" else if")) {
+                    String[] data = {col, line, wtcsIfElse, nc, ccspps, ccsIfElse};
                     model.addRow(data);
                 }
-                
+
                 // An iterative control structure such as a 'for', 'while', or 'do-while' loop
-                if (line.contains("for") || line.contains("while") || line.contains("do")) {
-                    String[] data = {col, col2, "1", "0", col2};
+                if (line.contains(" for") || line.contains(" while") || line.contains(" do")) {
+                    String[] data = {col, line, wtcsForWhile, nc, ccspps, ccsForWhile};
                     model.addRow(data);
                 }
-                
+
                 // The 'switch' statement in a 'switch-case' control structure 
-                if (line.contains("switch")) {
-                    String[] data = {col, col3, "1", "0", col3};
+                if (line.contains(" switch")) {
+                    String[] data = {col, line, wtcsSwitch, nc, ccspps, ccsSwitch};
                     model.addRow(data);
                 }
-                
+
                 // Each 'case' statement in a 'switch-case' control structure
-                if (line.contains("case")) {
-                    String[] data = {col, col4, "1", "0", col4};
+                if (line.contains(" case")) {
+                    String[] data = {col, line, wtcsCase, nc, ccspps, ccsCase};
                     model.addRow(data);
-                } 
-                
-                // Lines without control structure
+                } // Lines without any control structure
                 else {
-                    String[] data = {col, "0", "0", "0", "0"};
+                    String[] data = {col, line, nothing, "0", ccspps, ccsNothing};
                     model.addRow(data);
                 }
+
+                // Set column sizes
+                CtrlTbl.jTable1.setAutoResizeMode(CtrlTbl.jTable1.AUTO_RESIZE_NEXT_COLUMN);
+                TableColumnModel colModel = CtrlTbl.jTable1.getColumnModel();
+                colModel.getColumn(0).setPreferredWidth(25);
+                colModel.getColumn(1).setPreferredWidth(400);
+                colModel.getColumn(2).setPreferredWidth(35);
+                colModel.getColumn(3).setPreferredWidth(25);
+                colModel.getColumn(4).setPreferredWidth(50);
+                colModel.getColumn(5).setPreferredWidth(25);
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             System.out.println(e);
         }
     }
