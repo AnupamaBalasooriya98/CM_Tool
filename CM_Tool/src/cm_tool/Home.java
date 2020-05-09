@@ -24,7 +24,8 @@ import javax.swing.table.TableColumnModel;
 public class Home extends javax.swing.JFrame {
 
     CtrlTbl ctrl;
-    
+    Analyse analyse;
+
     /**
      * Creates new form NewJFrametest1
      */
@@ -62,6 +63,7 @@ public class Home extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
+        homeTextArea = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel5 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
@@ -269,6 +271,12 @@ public class Home extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel5.setText("Try you code here");
 
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -301,10 +309,10 @@ public class Home extends javax.swing.JFrame {
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButton2))
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -429,59 +437,93 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton12ActionPerformed
 
     public void ctrlStructures() {
+        // number of conditions in single line
+        int count = 1;
+        
+        // Weights for each control structure
+        int forIfElse = 2;
+        int forForWhile = 3;
+        int forSwitch = 2;
+        int forCase = 1;
+        int noCtrl = 0;
+        
+        // complexity of previous program
+        int previous = 0;
+        
+        // calculate ccs
+        int valIfElse = forIfElse * count;
+        int valForWhile = forForWhile * count;
+        int valSwitch = forSwitch * count;
+        int valCase = forCase * count;
+        int valNothing = noCtrl * count;
+        
+        // convert that values into string
+        String nc = String.valueOf(count);
+        String wtcsIfElse = String.valueOf(forIfElse);
+        String wtcsForWhile = String.valueOf(forForWhile);
+        String wtcsSwitch = String.valueOf(forSwitch);
+        String wtcsCase = String.valueOf(forCase);
+        String nothing = String.valueOf(noCtrl);
+        String ccspps = String.valueOf(previous);
+        
+        // convert calculated values into string
+        String ccsIfElse = String.valueOf(valIfElse);
+        String ccsForWhile = String.valueOf(valForWhile);
+        String ccsSwitch = String.valueOf(valSwitch);
+        String ccsCase = String.valueOf(valCase);
+        String ccsNothing = String.valueOf(valNothing);
+        
         // get file path to the uploaded file
         String filepath = path.getText();
-        
+
         File file = new File(filepath);
-        
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-            
+
             // give the table header
-            String[] colNames =  {"#", "Line", "Wtcs", "NC", "Ccspps", "Ccs"};
-            
+            String[] colNames = {"#", "Line", "Wtcs", "NC", "Ccspps", "Ccs"};
+
             DefaultTableModel model = (DefaultTableModel) CtrlTbl.jTable1.getModel();
-            
+
             model.setColumnIdentifiers(colNames);
-            
+
             Object[] lines = br.lines().toArray();
-            
+
             // read the file line by line and check for the control structures
             for (int i = 1; i <= lines.length; i++) {
                 String line = lines[i].toString();
 
                 String col = String.valueOf(i);
-                
+
                 // A conditional control structure such as an 'if' or 'else-if' condition
-                if (line.contains("if") || line.contains("else if")) {
-                    String[] data = {col, line, "2", "1", "0", "2"};
+                if (line.contains(" if") || line.contains(" else if")) {
+                    String[] data = {col, line, wtcsIfElse, nc, ccspps, ccsIfElse};
                     model.addRow(data);
                 }
-                
+
                 // An iterative control structure such as a 'for', 'while', or 'do-while' loop
-                if (line.contains("for") || line.contains("while") || line.contains("do")) {
-                    String[] data = {col, line, "3", "1", "0", "3"};
+                if (line.contains(" for") || line.contains(" while") || line.contains(" do")) {
+                    String[] data = {col, line, wtcsForWhile, nc, ccspps, ccsForWhile};
                     model.addRow(data);
                 }
-                
+
                 // The 'switch' statement in a 'switch-case' control structure 
-                if (line.contains("switch")) {
-                    String[] data = {col, line, "2", "1", "0", "2"};
+                if (line.contains(" switch")) {
+                    String[] data = {col, line, wtcsSwitch, nc, ccspps, ccsSwitch};
                     model.addRow(data);
                 }
-                
+
                 // Each 'case' statement in a 'switch-case' control structure
-                if (line.contains("case")) {
-                    String[] data = {col, line, "1", "1", "0", "1"};
+                if (line.contains(" case")) {
+                    String[] data = {col, line, wtcsCase, nc, ccspps, ccsCase};
                     model.addRow(data);
-                } 
-                
-                // Lines without any control structure
+                } // Lines without any control structure
                 else {
-                    String[] data = {col, line, "0", "0", "0", "0"};
+                    String[] data = {col, line, nothing, "0", ccspps, ccsNothing};
                     model.addRow(data);
                 }
-                
+
                 // Set column sizes
                 CtrlTbl.jTable1.setAutoResizeMode(CtrlTbl.jTable1.AUTO_RESIZE_NEXT_COLUMN);
                 TableColumnModel colModel = CtrlTbl.jTable1.getColumnModel();
@@ -497,8 +539,31 @@ public class Home extends javax.swing.JFrame {
         }
     }
 
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+
+    }//GEN-LAST:event_jButton8ActionPerformed
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (analyse == null) {
+            jDesktopPane1.removeAll();
+            Analyse tbl = new Analyse();
+            jDesktopPane1.add(tbl).setVisible(true);
+        } else {
+            jDesktopPane1.removeAll();
+            jDesktopPane1.add(analyse).setVisible(true);
+        }
+        totalComplexity();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    public void totalComplexity() {
+        String[] colNames = {"#", "Line", "Size", "Variable", "Method", "Coupling", "Inheritance", "Ctrl Structures"};
+        
+        DefaultTableModel model = (DefaultTableModel) Analyse.jTable1.getModel();
+        model.setColumnIdentifiers(colNames);
+        
+        
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Get the file to check
@@ -517,31 +582,31 @@ public class Home extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         // Upload zip files
         try {
             FileInputStream fis = new FileInputStream(filename);
             ZipInputStream zis = new ZipInputStream(fis);
             ZipEntry ze;
-            
+
             while ((ze = zis.getNextEntry()) != null) {
                 jComboBox2.addItem(ze.getName());
                 homeTextArea.setText("");
                 zis.closeEntry();
+                System.out.println(ze.getName());
             }
-            
+
             zis.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+        String selectedFile = jComboBox2.getSelectedItem().toString();
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
-    }//GEN-LAST:event_jButton8ActionPerformed
-    
     /**
      * @param args the command line arguments
      */
@@ -581,7 +646,7 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Aboutus;
-    public static final javax.swing.JTextArea homeTextArea = new javax.swing.JTextArea();
+    private javax.swing.JTextArea homeTextArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
